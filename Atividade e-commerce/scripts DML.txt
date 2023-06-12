@@ -1,0 +1,179 @@
+
+-- atividade 4: 
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('BRINQUEDOS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('DIVERSOS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('PRODUTOS DE LIMPEZA');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('LIVROS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('MÓVEIS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('ELETRÔNICOS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('ACESSÓRIOS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('JOGOS');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('ESPORTES');
+INSERT INTO "atv_e-commerce".categoria_produtos
+(descricao)
+VALUES('ROUPAS');
+
+-- Atividade 5 - Produtos
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(1, 'boneca', 20, 10);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(1, 'boneco', 20, 10);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(2, 'copo', 5, 10);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(3, 'amaciante', 30, 10);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(4, 'crepusculo', 70, 5);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(5, 'sofá', 700, 3);
+INSERT INTO "atv_e-commerce".produto
+(cod_categoria, nome, valor, qt_estoque)
+VALUES(6, 'telefone', 1000, 5);
+
+-- Atividade 6
+-- Inserindo cidades
+INSERT INTO "atv_e-commerce".cidade
+(nome, uf)
+VALUES('LAGUNA', 'SC');
+INSERT INTO "atv_e-commerce".cidade
+(nome, uf)
+VALUES('TUBARÃO', 'SC');
+INSERT INTO "atv_e-commerce".cidade
+(nome, uf)
+VALUES('GRAVATAL', 'SC');
+-- Inserindo endereços
+INSERT INTO "atv_e-commerce".endereco
+(cep, rua, bairro, cod_cidade)
+VALUES(887900, 'RUA 123', 'CENTRO', 1);
+INSERT INTO "atv_e-commerce".endereco
+(cep, rua, bairro, cod_cidade)
+VALUES(881930, 'RUA ALGUSTA', 'CASQUEIRO', 2);
+INSERT INTO "atv_e-commerce".endereco
+(cep, rua, bairro, cod_cidade)
+VALUES(887900, 'RUA SÃO MARCOS', 'TERMAS', 3);
+
+-- Inserindo clientes
+INSERT INTO "atv_e-commerce".cliente
+(cod_endereco, nome, sexo, dt_nascimento)
+VALUES(2, 'MARCOS ANTÔNIO', 'M', '01/10/2003');
+INSERT INTO "atv_e-commerce".cliente
+(cod_endereco, nome, sexo, dt_nascimento)
+VALUES(3, 'MARIA JULIA', 'F', '07/4/2006');
+
+-- Atividade 7
+INSERT INTO "atv_e-commerce".venda
+(cod_cliente, dt_venda)
+VALUES(3, '12/06/2023');
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(3, 1, 2);
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(3, 2, 4);
+
+
+INSERT INTO "atv_e-commerce".venda
+(cod_cliente, dt_venda)
+VALUES(4, '11/06/2023');
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(4, 3, 2);
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(4, 4, 1);
+
+INSERT INTO "atv_e-commerce".venda
+(cod_cliente, dt_venda)
+VALUES(4, '12/06/2023');
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(5, 1, 5);
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(5, 2, 1);
+INSERT INTO "atv_e-commerce".venda_produto
+(cod_venda, cod_produto, qt_venda)
+VALUES(5, 7, 10);
+
+
+-- 8
+select c.nome, e.rua, c2.nome as "Nome Cidade", c2.uf from cliente c 
+inner join endereco e on e.cod_endereco = c.cod_endereco
+inner join cidade c2 on c2.cod_cidade = e.cod_cidade and c2.nome = 'LAGUNA' ;
+
+-- 9
+select c.nome, v.dt_venda, v.cod_venda from cliente c 
+inner join venda v ON v.cod_cliente = c.cod_cliente
+where c.nome = 'MARIA JULIA';
+
+-- 10 
+select p.nome, cp.descricao from produto p
+right join categoria_produtos cp on cp.cod_categoria = p.cod_categoria;
+
+-- 11
+ --1) Listar todos os produtos comprados por um determinado cliente
+select c.nome, p.nome, vp.qt_venda from cliente c
+inner join venda v on v.cod_cliente = c.cod_cliente
+inner join venda_produto vp on vp.cod_venda = v.cod_venda
+inner join produto p on p.cod_produto = vp.cod_produto 
+where c.nome = 'MARIA JULIA';
+
+ --2) Listar a quantidade de produtos vendidos de uma determinada categoria
+select cp.descricao, sum(vp.qt_venda) from categoria_produtos cp 
+inner join produto p on p.cod_categoria = cp.cod_categoria
+inner join venda_produto vp on vp.cod_produto = p.cod_produto
+where cp.descricao = 'BRINQUEDOS'
+group by cp.descricao;
+
+ --3) Listar os clientes e o valor de todas as vendas feitas hoje
+select c.nome, v.dt_venda, sum(vp.qt_venda * p.valor) AS valor_total
+from cliente c
+inner join venda v on v.cod_cliente = c.cod_cliente and v.dt_venda = CURRENT_DATE
+inner join venda_produto vp on vp.cod_venda = v.cod_venda
+inner join produto p on p.cod_produto = vp.cod_produto
+group by c.nome, v.dt_venda;
+
+ --4) Mostrar a categoria mais vendida no site
+	select cp.descricao, sum(vp.qt_venda) as vendas from categoria_produtos cp 
+	inner join produto p on p.cod_categoria = cp.cod_categoria
+	inner join venda_produto vp on vp.cod_produto = p.cod_produto
+	group by cp.descricao
+    order by vendas desc
+   	limit 1;
+   
+-- 5) 
+
+
+
+
+
+
+
+
+
+
+

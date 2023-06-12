@@ -1,0 +1,198 @@
+-- DROP SCHEMA "atv_e-commerce";
+
+CREATE SCHEMA "atv_e-commerce" AUTHORIZATION postgres;
+
+-- DROP SEQUENCE "atv_e-commerce".categoria_produtos_cod_categoria_seq;
+
+CREATE SEQUENCE "atv_e-commerce".categoria_produtos_cod_categoria_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".cidade_cod_cidade_seq;
+
+CREATE SEQUENCE "atv_e-commerce".cidade_cod_cidade_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".cliente_cod_cliente_seq;
+
+CREATE SEQUENCE "atv_e-commerce".cliente_cod_cliente_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".endereco_cod_endereco_seq;
+
+CREATE SEQUENCE "atv_e-commerce".endereco_cod_endereco_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".produto_cod_produto_seq;
+
+CREATE SEQUENCE "atv_e-commerce".produto_cod_produto_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".telefone_cod_telefone_seq;
+
+CREATE SEQUENCE "atv_e-commerce".telefone_cod_telefone_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".venda_cod_venda_seq;
+
+CREATE SEQUENCE "atv_e-commerce".venda_cod_venda_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE "atv_e-commerce".venda_produto_cod_v_p_seq;
+
+CREATE SEQUENCE "atv_e-commerce".venda_produto_cod_v_p_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;-- "atv_e-commerce".categoria_produtos definition
+
+-- Drop table
+
+-- DROP TABLE categoria_produtos;
+
+CREATE TABLE categoria_produtos (
+	cod_categoria serial4 NOT NULL,
+	descricao varchar NOT NULL,
+	CONSTRAINT categoria_produtos_pk PRIMARY KEY (cod_categoria)
+);
+
+
+-- "atv_e-commerce".cidade definition
+
+-- Drop table
+
+-- DROP TABLE cidade;
+
+CREATE TABLE cidade (
+	cod_cidade serial4 NOT NULL,
+	nome varchar NOT NULL,
+	uf varchar(2) NOT NULL,
+	CONSTRAINT cidade_pk PRIMARY KEY (cod_cidade)
+);
+
+
+-- "atv_e-commerce".endereco definition
+
+-- Drop table
+
+-- DROP TABLE endereco;
+
+CREATE TABLE endereco (
+	cod_endereco serial4 NOT NULL,
+	cep int4 NOT NULL,
+	rua varchar NOT NULL,
+	bairro varchar NOT NULL,
+	cod_cidade int4 NOT NULL,
+	CONSTRAINT endereco_pk PRIMARY KEY (cod_endereco),
+	CONSTRAINT endereco_fk FOREIGN KEY (cod_cidade) REFERENCES cidade(cod_cidade)
+);
+
+
+-- "atv_e-commerce".produto definition
+
+-- Drop table
+
+-- DROP TABLE produto;
+
+CREATE TABLE produto (
+	cod_produto serial4 NOT NULL,
+	cod_categoria int4 NOT NULL,
+	nome varchar NOT NULL,
+	valor float4 NOT NULL,
+	qt_estoque int4 NOT NULL,
+	CONSTRAINT produto_pk PRIMARY KEY (cod_produto),
+	CONSTRAINT produto_fk FOREIGN KEY (cod_categoria) REFERENCES categoria_produtos(cod_categoria)
+);
+
+
+-- "atv_e-commerce".cliente definition
+
+-- Drop table
+
+-- DROP TABLE cliente;
+
+CREATE TABLE cliente (
+	cod_cliente serial4 NOT NULL,
+	cod_endereco int4 NOT NULL,
+	nome varchar NOT NULL,
+	sexo bpchar(1) NOT NULL,
+	dt_nascimento varchar NOT NULL,
+	CONSTRAINT cliente_pk PRIMARY KEY (cod_cliente),
+	CONSTRAINT cliente_fk FOREIGN KEY (cod_endereco) REFERENCES endereco(cod_endereco)
+);
+
+
+-- "atv_e-commerce".telefone definition
+
+-- Drop table
+
+-- DROP TABLE telefone;
+
+CREATE TABLE telefone (
+	cod_telefone serial4 NOT NULL,
+	fone int4 NOT NULL,
+	cod_cliente int4 NOT NULL,
+	CONSTRAINT telefone_pk PRIMARY KEY (cod_telefone),
+	CONSTRAINT telefone_fk FOREIGN KEY (cod_cliente) REFERENCES cliente(cod_cliente)
+);
+
+
+-- "atv_e-commerce".venda definition
+
+-- Drop table
+
+-- DROP TABLE venda;
+
+CREATE TABLE venda (
+	cod_venda serial4 NOT NULL,
+	cod_cliente int4 NOT NULL,
+	dt_venda date NOT NULL,
+	CONSTRAINT venda_pk PRIMARY KEY (cod_venda),
+	CONSTRAINT venda_fk FOREIGN KEY (cod_cliente) REFERENCES cliente(cod_cliente)
+);
+
+
+-- "atv_e-commerce".venda_produto definition
+
+-- Drop table
+
+-- DROP TABLE venda_produto;
+
+CREATE TABLE venda_produto (
+	cod_v_p serial4 NOT NULL,
+	cod_venda int4 NOT NULL,
+	cod_produto int4 NOT NULL,
+	qt_venda int4 NOT NULL,
+	CONSTRAINT venda_produto_pk PRIMARY KEY (cod_v_p),
+	CONSTRAINT venda_produto_fk FOREIGN KEY (cod_produto) REFERENCES produto(cod_produto),
+	CONSTRAINT venda_produto_fk2 FOREIGN KEY (cod_venda) REFERENCES venda(cod_venda)
+);
